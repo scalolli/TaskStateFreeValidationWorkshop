@@ -1,4 +1,4 @@
-My attempt at trying to go through this workshop and learn how to use Cats more in everyday code.
+My attempt at solving the [ScalaWave 2016](http://scalawave.io/) exercises and to learn how to use [Cats](https://typelevel.org/cats/) in everyday code.
 
 # Nice Scalaz (and Cats) monads you want to use: State, Free, Task, as well as Validation
 
