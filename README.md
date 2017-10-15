@@ -1,3 +1,5 @@
+My attempt at trying to go through this workshop and learn how to use Cats more in everyday code.
+
 # Nice Scalaz (and Cats) monads you want to use: State, Free, Task, as well as Validation
 
 Workshops will require SBT, some nice editor IDE and Git.
