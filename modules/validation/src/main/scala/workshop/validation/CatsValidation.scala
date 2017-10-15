@@ -1,11 +1,16 @@
 package workshop.validation
 
-import cats.data.{ Validated, ValidatedNel }
+import java.util.NoSuchElementException
+
+import cats.data.{NonEmptyList, Validated, ValidatedNel}
 import cats.syntax.cartesian._
 import workshop.common._
 import ActionType.ActionType
 import Currency.Currency
 import DataSource.DataSource
+import cats.data.Validated.{Invalid, Valid}
+
+import scala.util.{Failure, Success, Try}
 
 /**
  * Validation exercise - Cats
@@ -36,7 +41,12 @@ object CatsValidation {
    * @param double value to parse
    * @return error messages or value
    */
-  def parseDouble(double: String): ValidatedNel[ParsingError, Double] = ???
+  def parseDouble(double: String): ValidatedNel[ParsingError, Double] = Try {
+    double.toDouble
+  } match {
+    case Success(v) => Valid(v)
+    case Failure(e) => Invalid(NotANumber(double)).toValidatedNel
+  }
 
   /**
    * Parses passed String into natural number (non-negative Int) or returns error message(s).
@@ -47,7 +57,12 @@ object CatsValidation {
    * @param natural value to parse
    * @return error messages or value
    */
-  def parseNatural(natural: String): ValidatedNel[ParsingError, Int] = ???
+  def parseNatural(natural: String): ValidatedNel[ParsingError, Int] = Try {
+    natural.toInt
+  } match {
+    case Success(v) if v > -1 => Valid(v)
+    case _ => Invalid(NotNatural(natural)).toValidatedNel
+  }
 
   /**
    * Parses passed String into ActionType or returns error message(s).
@@ -59,7 +74,12 @@ object CatsValidation {
    * @param actionType value to parse
    * @return error messages or value
    */
-  def parseActionType(actionType: String): ValidatedNel[ParsingError, ActionType] = ???
+  def parseActionType(actionType: String): ValidatedNel[ParsingError, ActionType] = Try {
+    ActionType.withName(actionType)
+  } match {
+    case Success(v) => Valid(v)
+    case Failure(e: NoSuchElementException) => Invalid(InvalidActionType(actionType)).toValidatedNel
+  }
 
   /**
    * Parses passed String into Currency or returns error message(s).
