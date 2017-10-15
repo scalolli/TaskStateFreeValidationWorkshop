@@ -1,11 +1,12 @@
 package workshop.validation
 
-import cats.data.Validated
+import cats.data.{NonEmptyList, Validated, ValidatedNel}
 import Validated._
 import workshop.common._
 import ActionType.ActionType
 import Currency.Currency
 import DataSource.DataSource
+import cats.Cartesian
 import org.specs2.mutable.Specification
 
 class CatsValidationSpec extends Specification {

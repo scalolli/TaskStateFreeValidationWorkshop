@@ -1,8 +1,6 @@
 package workshop.validation
 
-import java.util.NoSuchElementException
-
-import cats.data.{NonEmptyList, Validated, ValidatedNel}
+import cats.data.ValidatedNel
 import cats.syntax.cartesian._
 import workshop.common._
 import ActionType.ActionType
@@ -113,5 +111,5 @@ object CatsValidation {
    * @param dataSource String parsed into DataSource
    * @return
    */
-  def parseConfig(accuracy: String, dataSource: String): ValidatedNel[ParsingError, Config] = ???
+  def parseConfig(accuracy: String, dataSource: String): ValidatedNel[ParsingError, Config] = (parseNatural(accuracy) |@| parseDataSource(dataSource)).map(Config.apply)
 }
