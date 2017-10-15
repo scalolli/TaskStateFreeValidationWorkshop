@@ -58,10 +58,10 @@ object CatsValidation {
    * @return error messages or value
    */
   def parseNatural(natural: String): ValidatedNel[ParsingError, Int] = Try {
-    natural.toInt
+    natural.trim.toInt
   } match {
-    case Success(v) if v > -1 => Valid(v)
-    case _ => Invalid(NotNatural(natural)).toValidatedNel
+    case Success(v) => if (v > -1) Valid(v) else Invalid(NotNatural(natural)).toValidatedNel
+    case _ => Invalid(NotANumber(natural)).toValidatedNel
   }
 
   /**
@@ -74,12 +74,7 @@ object CatsValidation {
    * @param actionType value to parse
    * @return error messages or value
    */
-  def parseActionType(actionType: String): ValidatedNel[ParsingError, ActionType] = Try {
-    ActionType.withName(actionType)
-  } match {
-    case Success(v) => Valid(v)
-    case Failure(e: NoSuchElementException) => Invalid(InvalidActionType(actionType)).toValidatedNel
-  }
+  def parseActionType(actionType: String): ValidatedNel[ParsingError, ActionType] = parseEnumeration(actionType, ActionType, _ => InvalidActionType(actionType))
 
   /**
    * Parses passed String into Currency or returns error message(s).
@@ -89,7 +84,14 @@ object CatsValidation {
    * @param currency value to parse
    * @return error messages or value
    */
-  def parseCurrency(currency: String): ValidatedNel[ParsingError, Currency] = ???
+  def parseCurrency(currency: String): ValidatedNel[ParsingError, Currency] = parseEnumeration(currency, Currency, _ => InvalidCurrency(currency))
+
+  private def parseEnumeration(enumerationValue: String, value: Enumeration, parsingError: String => ParsingError) = Try {
+    value.withName(enumerationValue.trim.toLowerCase())
+  } match {
+    case Success(v) => Valid(v)
+    case Failure(_) => Invalid(parsingError(enumerationValue)).toValidatedNel
+  }
 
   /**
    * Parses passed String into DataSource or returns error message(s).
@@ -99,7 +101,7 @@ object CatsValidation {
    * @param dataSource value to parse
    * @return error messages or value
    */
-  def parseDataSource(dataSource: String): ValidatedNel[ParsingError, DataSource] = ???
+  def parseDataSource(dataSource: String): ValidatedNel[ParsingError, DataSource] = parseEnumeration(dataSource, DataSource, _ => InvalidDataSource(dataSource))
 
   /**
    * Parses passed Strings into Config or returns error message(s).
